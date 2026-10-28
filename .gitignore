@@ -1,0 +1,27 @@
+# Build output (target-ide/ is the IDE compiler's separate output, see the "ide" profile in pom.xml)
+target/
+target-ide/
+*.class
+
+# RippleMap runtime data (H2 database files, stored imports)
+data/
+*.mv.db
+*.trace.db
+*.lock.db
+
+# Browser test tooling
+e2e/node_modules/
+e2e/test-results/
+e2e/playwright-report/
+e2e/.cache/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+
+# Visual QA screenshots
+e2e/screenshots/

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="ripplemap-csrf" th:content="${csrfToken}">
+  <title th:text="${title} + ' · RippleMap'">RippleMap</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/assets/favicon.svg}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script th:src="@{/js/theme-init.js}"></script>
+</head>
+<body>
+
+<aside th:fragment="sidebar" class="sidebar" id="sidebar" aria-label="Main navigation">
+  <a class="brand" th:href="@{/}">
+    <img th:src="@{/assets/logo.svg}" alt="" width="30" height="30">
+    <span><span class="brand-name">RippleMap</span><span class="brand-sub">Code impact analyzer</span></span>
+  </a>
+  <nav class="nav-section" aria-labelledby="nav-workspace">
+    <div class="nav-label" id="nav-workspace">Workspace</div>
+    <a class="nav-link" th:href="@{/}" th:attr="aria-current=${activeNav == 'dashboard'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-layout-dashboard}"/></svg>Dashboard</a>
+    <a class="nav-link" th:href="@{/projects}" th:attr="aria-current=${activeNav == 'projects' and projectId == null} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-folder-kanban}"/></svg>Projects</a>
+    <a class="nav-link" th:href="@{/import}" th:attr="aria-current=${activeNav == 'import'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-upload}"/></svg>Import Project</a>
+  </nav>
+  <nav class="nav-section" th:if="${projectId != null}" aria-labelledby="nav-project">
+    <div class="nav-label" id="nav-project">Project</div>
+    <div class="nav-project-name" th:text="${projectName}" th:title="${projectName}">Project</div>
+    <a class="nav-link project-link" th:href="@{/projects/{id}(id=${projectId})}" data-section="overview"
+       th:attr="aria-current=${projectSection == 'overview'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-box}"/></svg>Overview</a>
+    <a class="nav-link project-link" th:href="@{/projects/{id}/explorer(id=${projectId})}" data-section="explorer"
+       th:attr="aria-current=${projectSection == 'explorer'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-network}"/></svg>Dependency Explorer</a>
+    <a class="nav-link project-link" th:href="@{/projects/{id}/impact(id=${projectId})}" data-section="impact"
+       th:attr="aria-current=${projectSection == 'impact'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-zap}"/></svg>Impact Analysis</a>
+    <a class="nav-link project-link" th:href="@{/projects/{id}/cycles(id=${projectId})}" data-section="cycles"
+       th:attr="aria-current=${projectSection == 'cycles'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-repeat}"/></svg>Circular Dependencies</a>
+    <a class="nav-link project-link" th:href="@{/projects/{id}/history(id=${projectId})}" data-section="history"
+       th:attr="aria-current=${projectSection == 'history'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-history}"/></svg>Analysis History</a>
+    <a class="nav-link project-link" th:href="@{/projects/{id}/compare(id=${projectId})}" data-section="compare"
+       th:attr="aria-current=${projectSection == 'compare'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-git-compare}"/></svg>Snapshot Comparison</a>
+    <a class="nav-link project-link" th:href="@{/projects/{id}/reports(id=${projectId})}" data-section="reports"
+       th:attr="aria-current=${projectSection == 'reports'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-file-text}"/></svg>Reports</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a class="nav-link" th:href="@{/settings}" th:attr="aria-current=${activeNav == 'settings'} ? 'page' : null">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-settings}"/></svg>Settings &amp; About</a>
+    <button type="button" class="nav-link nav-button" id="theme-toggle">
+      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-moon}"/></svg><span>Theme: dark</span></button>
+  </div>
+</aside>
+
+<button th:fragment="menuButton" type="button" class="btn btn-ghost btn-icon menu-button" id="menu-button"
+        aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation">
+  <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-menu}"/></svg>
+</button>
+
+<header th:fragment="projectTopbar(sectionTitle)" class="topbar">
+  <button type="button" class="btn btn-ghost btn-icon menu-button" id="menu-button" aria-controls="sidebar"
+          aria-expanded="false" aria-label="Open navigation">
+    <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-menu}"/></svg>
+  </button>
+  <div class="topbar-title">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a th:href="@{/projects}">Projects</a><span aria-hidden="true">/</span>
+      <a th:href="@{/projects/{id}(id=${projectId})}" th:text="${projectName}">Project</a>
+    </nav>
+    <h1 th:text="${sectionTitle}">Section</h1>
+  </div>
+  <div class="topbar-actions">
+    <div class="snapshot-picker">
+      <label for="snapshot-select" class="small muted nowrap">Snapshot</label>
+      <select id="snapshot-select" class="select select-sm" aria-describedby="snapshot-hint">
+        <option value="">Loading…</option>
+      </select>
+      <span id="snapshot-hint" class="visually-hidden">Selects which analysis snapshot all data on this page comes from</span>
+    </div>
+    <div id="page-actions" class="row"></div>
+  </div>
+</header>
+
+<div th:fragment="shared">
+  <div class="toast-region" id="toast-region" role="status" aria-live="polite" aria-atomic="false"></div>
+  <dialog class="modal" id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+    <form method="dialog" id="confirm-form">
+      <div class="modal-header"><h2 id="confirm-title">Confirm</h2></div>
+      <div class="modal-body">
+        <p id="confirm-message"></p>
+        <div class="field hidden" id="confirm-text-field">
+          <label for="confirm-text-input" id="confirm-text-label">Type to confirm</label>
+          <input class="input" id="confirm-text-input" autocomplete="off">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" id="confirm-cancel" value="cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="confirm-ok" value="ok">Confirm</button>
+      </div>
+    </form>
+  </dialog>
+  <script th:src="@{/js/core.js}"></script>
+</div>
+
+</body>
+</html>

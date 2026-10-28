@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="compare" th:attr="data-project-id=${projectId}">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header th:replace="~{layout :: projectTopbar('Snapshot Comparison')}"></header>
+    <main id="main" class="content" tabindex="-1">
+      <p class="page-intro">Compare two snapshots of this project. Changes are detected by stable source identities (fully qualified
+        names and signatures), so database ids never influence the result.</p>
+      <section class="card snapshot-banner">
+        <div class="card-body">
+          <form id="compare-form" class="row" novalidate>
+            <div class="field">
+              <label for="base-select">Base (older)</label>
+              <select id="base-select" class="select"></select>
+            </div>
+            <button type="button" class="btn btn-ghost btn-icon" id="swap-button" aria-label="Swap base and target" title="Swap">
+              <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-arrow-left-right}"/></svg></button>
+            <div class="field">
+              <label for="target-select">Target (newer)</label>
+              <select id="target-select" class="select"></select>
+            </div>
+            <div class="field">
+              <span class="label" id="compare-layer-label">Level</span>
+              <div class="segmented" role="group" aria-labelledby="compare-layer-label">
+                <button type="button" data-layer="TYPE" aria-pressed="true">Types</button>
+                <button type="button" data-layer="METHOD" aria-pressed="false">Methods</button>
+              </div>
+            </div>
+            <div class="field"><span class="label">&nbsp;</span>
+              <button type="submit" class="btn btn-primary" id="compare-button">
+                <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-git-compare}"/></svg>Compare</button>
+            </div>
+          </form>
+        </div>
+      </section>
+      <div id="compare-result" aria-live="polite"></div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<script th:src="@{/js/pages/compare.js}"></script>
+</body>
+</html>

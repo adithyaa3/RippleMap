@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="dashboard">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header class="topbar">
+      <button th:replace="~{layout :: menuButton}"></button>
+      <div class="topbar-title"><h1>Dashboard</h1></div>
+      <div class="topbar-actions">
+        <a class="btn btn-primary" th:href="@{/import}">
+          <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-plus}"/></svg>Import project</a>
+      </div>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <div id="dashboard-root" aria-live="polite">
+        <div class="loading" role="status">Loading dashboard…</div>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<script th:src="@{/js/pages/dashboard.js}"></script>
+</body>
+</html>

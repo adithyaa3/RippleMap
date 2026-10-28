@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="impact" th:attr="data-project-id=${projectId}">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header th:replace="~{layout :: projectTopbar('Impact Analysis')}"></header>
+    <main id="main" class="content" tabindex="-1">
+      <div id="snapshot-notes"></div>
+      <div class="grid grid-sidebar">
+        <div class="stack" id="result-column">
+          <div id="impact-result" aria-live="polite"></div>
+        </div>
+        <aside class="stack">
+          <section class="card" aria-labelledby="simulate-heading">
+            <div class="card-header"><h2 id="simulate-heading">
+              <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-zap}"/></svg>Simulate a change</h2></div>
+            <div class="card-body">
+              <form id="impact-form" novalidate>
+                <div class="field">
+                  <span class="label" id="layer-label">Analysis level</span>
+                  <div class="segmented" role="group" aria-labelledby="layer-label">
+                    <button type="button" data-layer="TYPE" aria-pressed="true">Types</button>
+                    <button type="button" data-layer="METHOD" aria-pressed="false">Methods</button>
+                  </div>
+                </div>
+                <div class="field" data-field="nodeId">
+                  <label for="component-search">Component to change</label>
+                  <div id="selected-component" class="hidden"></div>
+                  <div class="picker" id="component-picker">
+                    <div class="input-icon">
+                      <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-search}"/></svg>
+                      <input id="component-search" class="input" type="search" autocomplete="off" placeholder="Search by name…"
+                             role="combobox" aria-expanded="false" aria-controls="component-results" aria-autocomplete="list">
+                    </div>
+                    <div id="component-results" class="search-results hidden" role="listbox" aria-label="Matching components"></div>
+                  </div>
+                  <span class="error" role="alert"></span>
+                </div>
+                <div class="field">
+                  <label class="check"><input type="checkbox" id="impact-inferred"> Include inferred relationships</label>
+                  <span class="hint">Default comes from Settings. Inferred relationships use documented conservative rules.</span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="analyze-button" disabled>
+                  <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-play}"/></svg>Analyze impact</button>
+              </form>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header"><h2>How the score works</h2></div>
+            <div class="card-body small stack">
+              <div class="formula formula-wrap">100 × (0.45·D/(N−1) + 0.40·T/(N−1) + 0.15·min(H,5)/5)</div>
+              <dl class="kv kv-tight">
+                <dt>N</dt><dd>components in the selected level</dd>
+                <dt>D</dt><dd>distinct direct dependents</dd>
+                <dt>T</dt><dd>distinct transitive dependents (the component itself excluded)</dd>
+                <dt>H</dt><dd>longest shortest path to an affected component</dd>
+              </dl>
+              <p class="muted" id="threshold-note">LOW below 30, MEDIUM from 30, HIGH from 60 (configurable in Settings).</p>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<link id="__________cytoscape_stylesheet" rel="stylesheet" th:href="@{/css/cytoscape-container.css}">
+<script th:src="@{/vendor/cytoscape/cytoscape.min.js}"></script>
+<script th:src="@{/js/graph.js}"></script>
+<script th:src="@{/js/pages/impact.js}"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="settings">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header class="topbar">
+      <button th:replace="~{layout :: menuButton}"></button>
+      <div class="topbar-title"><h1>Settings &amp; About</h1></div>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <div class="grid grid-sidebar">
+        <div class="stack">
+          <section class="card">
+            <div class="card-header"><h2>Impact analysis</h2></div>
+            <div class="card-body">
+              <form id="settings-form" novalidate>
+                <p class="small muted">Scores are classified as LOW below the first threshold, MEDIUM from the first threshold and HIGH from
+                  the second. Changes apply to new impact results and to the levels shown for stored scores.</p>
+                <div class="grid grid-2">
+                  <div class="field" data-field="lowThreshold">
+                    <label for="low-threshold">Low / medium threshold</label>
+                    <input class="input" id="low-threshold" type="number" min="0.01" max="99.99" step="0.01" required>
+                    <span class="error" role="alert"></span>
+                  </div>
+                  <div class="field" data-field="highThreshold">
+                    <label for="high-threshold">Medium / high threshold</label>
+                    <input class="input" id="high-threshold" type="number" min="0.02" max="100" step="0.01" required>
+                    <span class="error" role="alert"></span>
+                  </div>
+                </div>
+                <div class="field" data-field="includeInferred">
+                  <label class="check"><input type="checkbox" id="include-inferred"> Include inferred relationships by default</label>
+                  <span class="hint">Applies to impact analysis. Inferred relationships use documented conservative rules when the symbol solver cannot resolve a reference.</span>
+                </div>
+                <div class="field" data-field="explorerNodeLimit">
+                  <label for="node-limit">Explorer node limit</label>
+                  <input class="input" id="node-limit" type="number" min="25" max="2000" step="1" required>
+                  <span class="hint">Maximum nodes the Dependency Explorer draws at once (25–2000). Larger graphs are truncated with a notice.</span>
+                  <span class="error" role="alert"></span>
+                </div>
+                <div class="row">
+                  <button type="submit" class="btn btn-primary" id="settings-save">Save settings</button>
+                  <button type="button" class="btn btn-ghost" id="settings-defaults">Restore defaults</button>
+                  <span class="small faint" id="settings-updated"></span>
+                </div>
+              </form>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header"><h2>Appearance</h2></div>
+            <div class="card-body">
+              <fieldset class="field">
+                <legend class="label">Theme</legend>
+                <div class="row" id="theme-options">
+                  <label class="check"><input type="radio" name="theme" value="dark"> Dark</label>
+                  <label class="check"><input type="radio" name="theme" value="light"> Light</label>
+                  <label class="check"><input type="radio" name="theme" value="system"> Follow system</label>
+                </div>
+                <span class="hint">Stored in this browser only.</span>
+              </fieldset>
+            </div>
+          </section>
+        </div>
+        <aside class="stack">
+          <section class="card">
+            <div class="card-header"><h2>About RippleMap</h2></div>
+            <div class="card-body small">
+              <p>RippleMap analyzes Java source code, builds a dependency graph and estimates the structural impact of a change.
+                Source code is treated as data: it is never compiled or executed.</p>
+              <dl class="kv" id="system-info"><dt>Loading…</dt><dd></dd></dl>
+              <hr>
+              <div class="row">
+                <a class="btn btn-sm" href="/swagger-ui.html">API documentation</a>
+                <a class="btn btn-sm" href="/actuator/health">Health</a>
+              </div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header"><h2>Configured limits</h2></div>
+            <div class="card-body flush" id="limits-table"></div>
+            <div class="card-footer">Limits are configured with the listed properties (application.yml or command-line arguments).</div>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<script th:src="@{/js/pages/settings.js}"></script>
+</body>
+</html>

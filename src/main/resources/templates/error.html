@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${error})}"></head>
+<body data-page="error">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header class="topbar">
+      <button th:replace="~{layout :: menuButton}"></button>
+      <div class="topbar-title"><h1 th:text="${status} + ' · ' + ${error}">Error</h1></div>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <section class="card">
+        <div class="empty">
+          <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-triangle-alert}"/></svg>
+          <h3 th:text="${error}">Error</h3>
+          <p th:text="${message}">Something went wrong.</p>
+          <a class="btn btn-primary" th:href="@{/}">Back to dashboard</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+</body>
+</html>

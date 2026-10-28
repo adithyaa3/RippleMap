@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="explorer" th:attr="data-project-id=${projectId}">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header th:replace="~{layout :: projectTopbar('Dependency Explorer')}"></header>
+    <main id="main" class="explorer" tabindex="-1">
+      <div class="explorer-toolbar" role="toolbar" aria-label="Graph controls">
+        <div class="search-box">
+          <div class="input-icon">
+            <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-search}"/></svg>
+            <label for="node-search" class="visually-hidden">Search components</label>
+            <input id="node-search" class="input input-sm" type="search" autocomplete="off" placeholder="Search classes, interfaces, methods…"
+                   role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list">
+          </div>
+          <div id="search-results" class="search-results hidden" role="listbox" aria-label="Search results"></div>
+        </div>
+        <div class="segmented" role="group" aria-label="Graph layer">
+          <button type="button" data-layer="TYPE" aria-pressed="true">Types</button>
+          <button type="button" data-layer="METHOD" aria-pressed="false">Methods</button>
+        </div>
+        <label class="visually-hidden" for="scope-select">Scope</label>
+        <select id="scope-select" class="select select-sm" title="What part of the graph to show">
+          <option value="ALL">Whole graph</option>
+          <option value="NEIGHBORHOOD">Neighborhood of selection</option>
+          <option value="DEPENDENTS">Transitive dependents of selection</option>
+          <option value="DEPENDENCIES">Transitive dependencies of selection</option>
+        </select>
+        <label class="visually-hidden" for="depth-select">Neighborhood depth</label>
+        <select id="depth-select" class="select select-sm" title="Neighborhood depth">
+          <option value="1">Depth 1</option>
+          <option value="2">Depth 2</option>
+          <option value="3">Depth 3</option>
+          <option value="4">Depth 4</option>
+        </select>
+        <label class="visually-hidden" for="layout-select">Layout</label>
+        <select id="layout-select" class="select select-sm" title="Layout">
+          <option value="force">Force-directed</option>
+          <option value="hierarchy">Hierarchy</option>
+          <option value="concentric">Concentric</option>
+          <option value="grid">Grid</option>
+        </select>
+        <button type="button" class="btn btn-sm" id="filter-button" aria-expanded="false" aria-controls="filter-panel">
+          <svg class="icon icon-sm" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-sliders-horizontal}"/></svg>Filters<span id="filter-count" class="badge badge-accent hidden"></span></button>
+        <span class="spacer"></span>
+        <span id="graph-summary" class="xsmall muted" aria-live="polite"></span>
+      </div>
+
+      <div class="explorer-canvas-wrap">
+        <div id="cy" aria-label="Dependency graph. Use the search box and the details panel to navigate with the keyboard." role="img"></div>
+        <div id="canvas-banner" class="canvas-banner hidden" role="status"></div>
+        <div id="canvas-overlay" class="canvas-overlay"></div>
+        <div id="filter-panel" class="filter-panel hidden" role="dialog" aria-label="Graph filters">
+          <div class="filter-group">
+            <h3>Node types</h3>
+            <div class="check-list" id="node-kind-filters"></div>
+          </div>
+          <div class="filter-group">
+            <h3>Relationship kinds</h3>
+            <div class="row"><button type="button" class="link-button xsmall" id="kinds-all">All</button>
+              <button type="button" class="link-button xsmall" id="kinds-none">None</button></div>
+            <div class="check-list" id="relationship-filters"></div>
+          </div>
+          <div class="filter-group">
+            <h3>Resolution</h3>
+            <label class="check"><input type="checkbox" id="include-inferred" checked> Include inferred relationships</label>
+            <p class="xsmall faint">Inferred relationships (dashed) come from conservative rules used when the symbol solver could not resolve a reference.</p>
+          </div>
+          <div class="row">
+            <button type="button" class="btn btn-primary btn-sm" id="filters-apply">Apply</button>
+            <button type="button" class="btn btn-sm" id="filters-reset">Reset</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="filters-close">Close</button>
+          </div>
+        </div>
+        <div class="graph-controls" role="group" aria-label="Zoom">
+          <button type="button" class="btn btn-icon btn-sm" id="zoom-in" aria-label="Zoom in" title="Zoom in">
+            <svg class="icon icon-sm" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-plus}"/></svg></button>
+          <button type="button" class="btn btn-icon btn-sm" id="zoom-out" aria-label="Zoom out" title="Zoom out">
+            <svg class="icon icon-sm" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-minus}"/></svg></button>
+          <button type="button" class="btn btn-icon btn-sm" id="fit-graph" aria-label="Fit graph to view" title="Fit to view">
+            <svg class="icon icon-sm" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-maximize}"/></svg></button>
+          <button type="button" class="btn btn-icon btn-sm" id="reset-layout" aria-label="Reset layout" title="Reset layout">
+            <svg class="icon icon-sm" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-rotate-ccw}"/></svg></button>
+        </div>
+        <div class="legend" id="legend" aria-label="Legend">
+          <span class="legend-item"><span class="kind kind-CLASS">Class</span></span>
+          <span class="legend-item"><span class="kind kind-INTERFACE">Interface</span></span>
+          <span class="legend-item"><span class="kind kind-ENUM">Enum</span></span>
+          <span class="legend-item"><span class="kind kind-RECORD">Record</span></span>
+          <span class="legend-item"><span class="kind kind-ANNOTATION">Annotation</span></span>
+          <span class="legend-item"><span class="legend-line"></span>depends on (arrow → dependency)</span>
+          <span class="legend-item"><span class="legend-line dependency"></span>dependency of selection</span>
+          <span class="legend-item"><span class="legend-line dependent"></span>dependent of selection</span>
+          <span class="legend-item"><span class="legend-line inferred"></span>inferred</span>
+        </div>
+      </div>
+
+      <aside class="details-panel" id="details-panel" aria-label="Selection details" aria-live="polite"></aside>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<link id="__________cytoscape_stylesheet" rel="stylesheet" th:href="@{/css/cytoscape-container.css}">
+<script th:src="@{/vendor/cytoscape/cytoscape.min.js}"></script>
+<script th:src="@{/js/graph.js}"></script>
+<script th:src="@{/js/pages/explorer.js}"></script>
+</body>
+</html>

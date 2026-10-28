@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="projects">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header class="topbar">
+      <button th:replace="~{layout :: menuButton}"></button>
+      <div class="topbar-title"><h1>Projects</h1></div>
+      <div class="topbar-actions">
+        <a class="btn btn-primary" th:href="@{/import}">
+          <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-plus}"/></svg>Import project</a>
+      </div>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <div class="row-between" id="projects-toolbar">
+        <div class="input-icon search-box">
+          <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-search}"/></svg>
+          <label for="project-filter" class="visually-hidden">Filter projects</label>
+          <input id="project-filter" class="input" type="search" placeholder="Filter projects by name">
+        </div>
+        <span class="small muted" id="project-count" aria-live="polite"></span>
+      </div>
+      <div id="projects-root" class="project-cards-container">
+        <div class="loading" role="status">Loading projects…</div>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<script th:src="@{/js/pages/projects.js}"></script>
+</body>
+</html>

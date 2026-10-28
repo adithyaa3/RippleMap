@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="cycles" th:attr="data-project-id=${projectId}">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header th:replace="~{layout :: projectTopbar('Circular Dependencies')}"></header>
+    <main id="main" class="content" tabindex="-1">
+      <div id="snapshot-notes"></div>
+      <div class="row-between snapshot-banner">
+        <div class="row">
+          <div class="segmented" role="group" aria-label="Graph layer">
+            <button type="button" data-layer="TYPE" aria-pressed="true">Types</button>
+            <button type="button" data-layer="METHOD" aria-pressed="false">Methods</button>
+          </div>
+          <label class="check"><input type="checkbox" id="cycles-inferred" checked> Include inferred relationships</label>
+        </div>
+        <div class="row" id="cycle-downloads"></div>
+      </div>
+      <div class="grid grid-sidebar">
+        <section class="card">
+          <div class="card-header"><h2 id="cycles-heading">Cyclic components</h2><span class="sub" id="cycles-count"></span></div>
+          <div class="card-body flush" id="cycle-list" aria-live="polite"></div>
+          <div class="card-footer" id="cycles-note"></div>
+        </section>
+        <section class="card" aria-labelledby="cycle-detail-heading">
+          <div class="card-header"><h2 id="cycle-detail-heading">Selected component</h2></div>
+          <div class="card-body" id="cycle-detail"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<link id="__________cytoscape_stylesheet" rel="stylesheet" th:href="@{/css/cytoscape-container.css}">
+<script th:src="@{/vendor/cytoscape/cytoscape.min.js}"></script>
+<script th:src="@{/js/graph.js}"></script>
+<script th:src="@{/js/pages/cycles.js}"></script>
+</body>
+</html>

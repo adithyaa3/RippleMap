@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="overview" th:attr="data-project-id=${projectId}">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header th:replace="~{layout :: projectTopbar('Project Overview')}"></header>
+    <main id="main" class="content" tabindex="-1">
+      <div class="stack">
+        <section class="card" id="project-card" aria-labelledby="project-heading">
+          <div class="card-body"><div class="loading" role="status">Loading project…</div></div>
+        </section>
+        <div id="active-analysis" aria-live="polite"></div>
+        <div id="snapshot-notes"></div>
+        <div id="snapshot-root"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<script th:src="@{/js/project-actions.js}"></script>
+<script th:src="@{/js/pages/overview.js}"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="reports" th:attr="data-project-id=${projectId}">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header th:replace="~{layout :: projectTopbar('Reports')}"></header>
+    <main id="main" class="content" tabindex="-1">
+      <div id="snapshot-notes"></div>
+      <p class="page-intro">Every report is generated from the snapshot selected above. CSV files are safe to open in spreadsheets
+        (cells that could act as formulas are neutralized); HTML reports are self-contained and contain no scripts.</p>
+      <div class="stack">
+        <section class="card">
+          <div class="card-header"><h2>Snapshot reports</h2><span class="sub" id="report-scope"></span></div>
+          <div class="card-body flush" id="report-list" aria-live="polite"><div class="loading" role="status">Loading…</div></div>
+        </section>
+        <div class="grid grid-2">
+          <section class="card">
+            <div class="card-header"><h2>
+              <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-zap}"/></svg>Impact report</h2></div>
+            <div class="card-body small">
+              <p class="muted">Impact reports describe one component. Run an impact analysis, then download HTML, CSV or JSON from its result.</p>
+              <a class="btn btn-sm project-link" id="impact-link" th:href="@{/projects/{id}/impact(id=${projectId})}" data-section="impact">Open impact analysis</a>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header"><h2>
+              <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-git-compare}"/></svg>Comparison report</h2></div>
+            <div class="card-body small">
+              <p class="muted">Comparison reports list added and removed components and dependencies between two snapshots.</p>
+              <a class="btn btn-sm" th:href="@{/projects/{id}/compare(id=${projectId})}">Open snapshot comparison</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<script th:src="@{/js/pages/reports.js}"></script>
+</body>
+</html>

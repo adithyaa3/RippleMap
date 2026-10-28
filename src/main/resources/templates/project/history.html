@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="history" th:attr="data-project-id=${projectId}">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header th:replace="~{layout :: projectTopbar('Analysis History')}"></header>
+    <main id="main" class="content" tabindex="-1">
+      <p class="page-intro">Every analysis is stored as an immutable snapshot. Open any snapshot to explore its graph, run impact analysis
+        against it, export its reports or compare it with another snapshot. A failed analysis never replaces earlier results.</p>
+      <div class="stack">
+        <section class="card">
+          <div class="card-header"><h2>Snapshots</h2><div class="row" id="history-actions"></div></div>
+          <div class="card-body flush" id="history-table" aria-live="polite"><div class="loading" role="status">Loading snapshots…</div></div>
+        </section>
+        <section class="card" id="versions-card">
+          <div class="card-header"><h2>Stored versions</h2></div>
+          <div class="card-body flush" id="versions-table"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<script th:src="@{/js/project-actions.js}"></script>
+<script th:src="@{/js/pages/history.js}"></script>
+</body>
+</html>

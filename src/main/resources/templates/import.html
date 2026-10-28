@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${pageTitle})}"></head>
+<body data-page="import" th:attr="data-local-scan=${localScanEnabled}">
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="app">
+  <aside th:replace="~{layout :: sidebar}"></aside>
+  <div class="main">
+    <header class="topbar">
+      <button th:replace="~{layout :: menuButton}"></button>
+      <div class="topbar-title"><h1>Import Project</h1></div>
+    </header>
+    <main id="main" class="content" tabindex="-1">
+      <p class="page-intro">Upload a Java project as a ZIP archive. RippleMap extracts only <code>.java</code> files, parses them as data
+        (nothing is compiled or executed), builds the dependency graph and stores the snapshot locally.</p>
+      <div class="grid grid-sidebar">
+        <section class="card">
+          <div class="card-body">
+            <div class="tabs" role="tablist" aria-label="Import source">
+              <button type="button" role="tab" id="tab-zip" aria-controls="panel-zip" aria-selected="true">ZIP archive</button>
+              <button type="button" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="false">Local directory</button>
+            </div>
+
+            <div id="panel-zip" role="tabpanel" aria-labelledby="tab-zip">
+              <form id="zip-form" novalidate>
+                <div class="field" data-field="name">
+                  <label for="zip-name">Project name</label>
+                  <input class="input" id="zip-name" name="name" maxlength="100" required autocomplete="off" placeholder="e.g. Order Service">
+                  <span class="hint">Letters, digits, spaces and . _ - ( ) [ ]; must be unique.</span>
+                  <span class="error" role="alert"></span>
+                </div>
+                <div class="field" data-field="description">
+                  <label for="zip-description">Description <span class="optional">(optional)</span></label>
+                  <textarea class="textarea" id="zip-description" name="description" maxlength="2000"></textarea>
+                  <span class="error" role="alert"></span>
+                </div>
+                <div class="field" data-field="file">
+                  <span class="label" id="zip-file-label">ZIP archive</span>
+                  <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-labelledby="zip-file-label zip-drop-text">
+                    <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-upload}"/></svg>
+                    <div id="zip-drop-text">Drop a .zip file here or <span class="link-button">browse</span></div>
+                    <div class="hint" id="zip-limit-hint">Maximum upload size is shown on the right.</div>
+                    <div class="dropzone-file" id="zip-file-name"></div>
+                  </div>
+                  <input type="file" id="zip-file" name="file" accept=".zip,application/zip" class="visually-hidden" tabindex="-1" aria-labelledby="zip-file-label">
+                  <span class="error" role="alert"></span>
+                </div>
+                <div class="field">
+                  <label class="check"><input type="checkbox" id="zip-tests" name="includeTests"><span>Include test sources (for example <code>src/test/java</code>)</span></label>
+                  <span class="hint">By default only production sources are analyzed. You can change the scope when re-analyzing.</span>
+                </div>
+                <div class="row">
+                  <button type="submit" class="btn btn-primary" id="zip-submit">
+                    <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-play}"/></svg>Import and analyze</button>
+                  <button type="reset" class="btn btn-ghost" id="zip-reset">Clear</button>
+                </div>
+              </form>
+            </div>
+
+            <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="hidden">
+              <div id="local-disabled" class="alert alert-info hidden">
+                <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-info}"/></svg>
+                <div><div class="alert-title">Local directory scanning is disabled</div>
+                  <div>For safety, the server only scans directories below configured roots. Start RippleMap with
+                    <code>--ripplemap.local-scan.allowed-roots=/path/to/workspace</code> to enable it. See docs/USER_GUIDE.md.</div></div>
+              </div>
+              <form id="local-form" novalidate class="hidden">
+                <div class="field" data-field="name">
+                  <label for="local-name">Project name</label>
+                  <input class="input" id="local-name" name="name" maxlength="100" required autocomplete="off">
+                  <span class="error" role="alert"></span>
+                </div>
+                <div class="field" data-field="description">
+                  <label for="local-description">Description <span class="optional">(optional)</span></label>
+                  <textarea class="textarea" id="local-description" maxlength="2000"></textarea>
+                  <span class="error" role="alert"></span>
+                </div>
+                <div class="field" data-field="path">
+                  <label for="local-path">Directory (absolute path)</label>
+                  <input class="input mono" id="local-path" name="path" maxlength="1024" required autocomplete="off">
+                  <span class="hint" id="local-roots-hint"></span>
+                  <span class="error" role="alert"></span>
+                </div>
+                <div class="field">
+                  <label class="check"><input type="checkbox" id="local-tests"> Include test sources</label>
+                </div>
+                <button type="submit" class="btn btn-primary" id="local-submit">
+                  <svg class="icon" aria-hidden="true"><use th:href="@{/assets/icons.svg#i-play}"/></svg>Register and scan</button>
+              </form>
+            </div>
+
+            <div id="import-progress" class="hidden" aria-live="polite">
+              <hr>
+              <div class="row-between"><strong id="progress-title">Uploading…</strong><span class="small muted" id="progress-detail"></span></div>
+              <div class="progress" id="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+              <div id="progress-result"></div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="stack">
+          <section class="card">
+            <div class="card-header"><h2>What is analyzed</h2></div>
+            <div class="card-body small">
+              <ul>
+                <li>Classes, interfaces, enums, records, annotation types and nested types</li>
+                <li>Methods, constructors and fields</li>
+                <li>Inheritance, field and signature types, object creation, method calls, field access and annotations</li>
+                <li>Maven, Gradle and plain source layouts; generated sources in <code>target/</code> or <code>build/</code> are skipped</li>
+              </ul>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header"><h2>Upload limits</h2></div>
+            <div class="card-body"><dl class="kv" id="limits"><dt>Loading…</dt><dd></dd></dl></div>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+<div th:replace="~{layout :: shared}"></div>
+<script th:src="@{/js/pages/import.js}"></script>
+</body>
+</html>

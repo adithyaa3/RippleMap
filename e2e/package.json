@@ -1,0 +1,13 @@
+{
+  "name": "ripplemap-e2e",
+  "private": true,
+  "description": "Browser end-to-end tests for RippleMap (Playwright). Not part of the application build.",
+  "scripts": {
+    "test": "playwright test",
+    "screenshots": "playwright test --grep @screenshots"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.64.1"
+  }
+}
