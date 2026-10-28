@@ -146,3 +146,4 @@ RippleMap bundles these third-party components (versions in `pom.xml`; each depe
 * Apache 2.0 or LGPL 3.0: JavaParser 3.28.
 * MIT: Cytoscape.js ([license](src/main/resources/static/vendor/cytoscape/LICENSE.txt)).
 * ISC: Lucide icons ([license](src/main/resources/static/assets/icons-LICENSE.txt)).
+
